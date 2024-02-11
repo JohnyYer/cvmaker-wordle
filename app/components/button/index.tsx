@@ -1,7 +1,17 @@
+import { Link } from "@remix-run/react";
 import * as styles from "./styles.css";
 
-const Button = () => {
-  return <button className={styles.root}>Button</button>;
+type Props = {
+  to: string;
+  children: string;
 };
 
-export default Button;
+const ButtonLink = ({ to, children }: Props) => {
+  return (
+    <Link to={to} className={styles.root}>
+      {children}
+    </Link>
+  );
+};
+
+export default ButtonLink;
