@@ -1,16 +1,15 @@
-import { Link } from "@remix-run/react";
 import * as styles from "./styles.css";
 
 type Props = {
-  to: string;
   children: string;
+  onClick: () => void;
 };
 
-const ButtonLink = ({ to, children }: Props) => {
+const ButtonLink = ({ children, onClick }: Props) => {
   return (
-    <Link to={to} className={styles.root}>
+    <button className={styles.root} onClick={onClick}>
       {children}
-    </Link>
+    </button>
   );
 };
 

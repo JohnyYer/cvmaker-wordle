@@ -23,6 +23,10 @@ export default function App() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <link
+          href="https://fonts.cdnfonts.com/css/sf-ui-display"
+          rel="stylesheet"
+        />
       </head>
       <body>
         <Outlet />

@@ -42,8 +42,6 @@ export const checkMatch = (word: string, guess: GridItems[], step: number) => {
 export const checkWin = (guess: GridItems[], step: number) => {
   const guessString = guess.slice(step - 5, step);
 
-  console.log(guessString);
-
   return guessString.every(({ status }) => status === "match");
 };
 

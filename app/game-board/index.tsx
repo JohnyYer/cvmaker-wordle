@@ -1,9 +1,10 @@
-import { Outlet, json } from "@remix-run/react";
+import { json, useLoaderData, useNavigate } from "@remix-run/react";
 import * as styles from "./index.css";
 import Tile from "~/components/tile";
 import { useEffect, useState } from "react";
 import { GridItems } from "~/types";
 import { checkLose, checkMatch, checkWin } from "~/utils/checkMatch";
+import Dialog from "~/components/dialog";
 
 export async function loader() {
   const res = await fetch(
@@ -13,15 +14,18 @@ export async function loader() {
 }
 
 const GameBoard = () => {
+  const navigate = useNavigate();
   const gridItems = new Array(25).fill("").map((letter) => ({
     letter,
   }));
   const [guessString, setGuessString] = useState<GridItems[]>(gridItems);
   const [step, setStep] = useState(0);
   const [pause, setPause] = useState(false);
+  const [winDialogOpen, setWinDialogOpen] = useState(false);
+  const [loseDialogOpen, setLoseDialogOpen] = useState(false);
 
-  // const winWord = useLoaderData<typeof loader>();
-  const winWord = ["apple"];
+  const winWord = useLoaderData<typeof loader>();
+  // const winWord = ["apple"];
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -43,14 +47,16 @@ const GameBoard = () => {
       } else {
         if (event.key === "Enter") {
           const checkedResults = checkMatch(winWord[0], guessString, step);
-          setGuessString(checkedResults);
+          setGuessString(() => checkedResults);
 
+          // Check if win
           if (checkWin(checkedResults, step)) {
-            alert("win");
+            setWinDialogOpen(true);
           }
 
+          // Check if lose
           if (checkLose(step)) {
-            alert("lose");
+            setLoseDialogOpen(true);
           }
           setPause(false);
         }
@@ -69,7 +75,13 @@ const GameBoard = () => {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [step, pause, guessString]);
+  }, [step, pause, guessString, winWord]);
+
+  const resetGame = () => {
+    navigate(".", { replace: true });
+    setGuessString(gridItems);
+    setStep(0);
+  };
 
   return (
     <main className={styles.root}>
@@ -78,7 +90,24 @@ const GameBoard = () => {
           <Tile key={index} letter={letter} status={status} />
         ))}
       </div>
-      <Outlet />
+      <Dialog
+        open={winDialogOpen}
+        emoji="🏆"
+        heading="You're a Winner, Champ!"
+        text="Congrats! You've just crushed it and won the game. Now, bask in
+        your glory and celebrate like a boss! 🎉"
+        buttonText="Try Again!"
+        onClick={() => resetGame()}
+      />
+      <Dialog
+        open={loseDialogOpen}
+        emoji="🙈"
+        heading="Oops! Tough Luck, But Don't Give Up!"
+        text="You didn't quite make it this time, but hey, no worries! Give it another shot, 
+        and who knows, the next round might be your moment of glory! Keep going, champ! 💪🎮"
+        buttonText="Try Again!"
+        onClick={() => resetGame()}
+      />
     </main>
   );
 };
