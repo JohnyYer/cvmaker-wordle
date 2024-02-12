@@ -8,16 +8,25 @@ type Props = {
   text: string;
   buttonText: string;
   onClick: () => void;
+  onClose: () => void;
 };
 
-const Dialog = ({ open, emoji, heading, text, buttonText, onClick }: Props) => {
+const Dialog = ({
+  open,
+  emoji,
+  heading,
+  text,
+  buttonText,
+  onClick,
+  onClose,
+}: Props) => {
   return (
     <dialog open={open} className={styles.root}>
       <div className={styles.icon}>{emoji}</div>
 
       <h1 className={styles.heading}>{heading}</h1>
       <p className={styles.text}>{text}</p>
-      <form method="dialog">
+      <form method="dialog" onSubmit={() => onClose()}>
         <Button onClick={onClick}>{buttonText}</Button>
       </form>
     </dialog>

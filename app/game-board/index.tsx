@@ -64,7 +64,7 @@ const GameBoard = () => {
 
       // Handle backspace
       if (event.key === "Backspace" && step !== 0) {
-        guessString[step - 1].letter = "";
+        guessString[step - 1] = { letter: "", status: undefined };
         setStep((prevStep) => prevStep - 1);
         setGuessString([...guessString]);
         setPause(false);
@@ -87,10 +87,17 @@ const GameBoard = () => {
     <main className={styles.root}>
       <div className={styles.grid}>
         {guessString.map(({ letter, status }, index) => (
-          <Tile key={index} letter={letter} status={status} />
+          <Tile
+            key={index}
+            letter={letter}
+            status={status}
+            rowNumber={step}
+            index={index}
+          />
         ))}
       </div>
       <Dialog
+        onClose={() => setWinDialogOpen(false)}
         open={winDialogOpen}
         emoji="🏆"
         heading="You're a Winner, Champ!"
@@ -100,6 +107,7 @@ const GameBoard = () => {
         onClick={() => resetGame()}
       />
       <Dialog
+        onClose={() => setLoseDialogOpen(false)}
         open={loseDialogOpen}
         emoji="🙈"
         heading="Oops! Tough Luck, But Don't Give Up!"
